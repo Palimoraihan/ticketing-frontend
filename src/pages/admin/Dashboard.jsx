@@ -55,7 +55,7 @@ const AdminDashboard = () => {
           <Col md={6} lg={3}>
             <StatCard
               title="Total Tickets"
-              value={stats.totalTickets}
+              value={0}
               icon={<FaTicketAlt className="text-primary" />}
               color="primary"
             />
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
           <Col md={6} lg={3}>
             <StatCard
               title="Open Tickets"
-              value={stats.openTickets}
+              value={stats.tickets.open}
               icon={<FaExclamationTriangle className="text-warning" />}
               color="warning"
             />

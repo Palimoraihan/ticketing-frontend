@@ -1,25 +1,33 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 // Contexts
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 // Components
-import Navbar from './components/Navbar';
-import TicketList from './components/TicketList';
-import TicketDetail from './components/TicketDetail';
-import CreateTicket from './components/CreateTicket';
+import Navbar from "./components/Navbar";
+import TicketList from "./components/TicketList";
+import TicketDetail from "./components/TicketDetail";
+import CreateTicket from "./components/CreateTicket";
 
 // Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import AdminDashboard from './pages/admin/Dashboard';
-import AgentDashboard from './pages/agent/Dashboard';
-import CustomerDashboard from './pages/customer/Dashboard';
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
+import AgentDashboard from "./pages/agent/Dashboard";
+import CustomerDashboard from "./pages/customer/Dashboard";
+import AdminDashboard from "./components/AdminDashboard";
+import AdminLayout from "./components/AdminLayout";
+import MainAdmin from "./pages/admin/MainAdmin";
 
 // Protected Route component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -45,11 +53,16 @@ const Dashboard = () => {
   const { user } = useAuth();
 
   switch (user?.role) {
-    case 'admin':
-      return <AdminDashboard />;
-    case 'agent':
+    case "admin":
+      return (
+        <MainAdmin/>
+        // <AdminLayout>
+        //   <AdminDashboard />
+        // </AdminLayout>
+      );
+    case "agent":
       return <AgentDashboard />;
-    case 'customer':
+    case "customer":
       return <CustomerDashboard />;
     default:
       return <Navigate to="/login" replace />;
@@ -62,6 +75,7 @@ function App() {
       <Router>
         <div className="app-container">
           <Navbar />
+          
           <main className="main-content">
             <Routes>
               {/* Public routes */}
@@ -72,8 +86,16 @@ function App() {
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'agent', 'customer']}>
+                  <ProtectedRoute allowedRoles={["admin", "agent", "customer"]}>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
                   </ProtectedRoute>
                 }
               />
@@ -82,7 +104,7 @@ function App() {
               <Route
                 path="/tickets"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'agent', 'customer']}>
+                  <ProtectedRoute allowedRoles={["admin", "agent", "customer"]}>
                     <TicketList />
                   </ProtectedRoute>
                 }
@@ -90,7 +112,7 @@ function App() {
               <Route
                 path="/tickets/new"
                 element={
-                  <ProtectedRoute allowedRoles={['customer']}>
+                  <ProtectedRoute allowedRoles={["customer"]}>
                     <CreateTicket />
                   </ProtectedRoute>
                 }
@@ -98,7 +120,7 @@ function App() {
               <Route
                 path="/tickets/:id"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'agent', 'customer']}>
+                  <ProtectedRoute allowedRoles={["admin", "agent", "customer"]}>
                     <TicketDetail />
                   </ProtectedRoute>
                 }

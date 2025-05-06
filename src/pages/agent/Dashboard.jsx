@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Table, ProgressBar, Button } from 'react-bootstrap';
-import { FaTicketAlt, FaClock, FaCheckCircle, FaChartLine, FaList } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import DashboardLayout from '../../layouts/DashboardLayout';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { Card, Row, Col, Table, ProgressBar, Button } from "react-bootstrap";
+import {
+  FaTicketAlt,
+  FaClock,
+  FaCheckCircle,
+  FaChartLine,
+  FaList,
+} from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import DashboardLayout from "../../layouts/DashboardLayout";
+import { toast } from "react-toastify";
 
 const AgentDashboard = () => {
   const [stats, setStats] = useState({
     assignedTickets: 0,
     pendingTickets: 0,
     resolvedTickets: 0,
-    avgResolutionTime: '0h'
+    avgResolutionTime: "0h",
   });
 
   const [recentTickets, setRecentTickets] = useState([]);
@@ -24,12 +30,12 @@ const AgentDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/api/dashboard/agent');
+      const response = await axios.get("/api/dashboard/agent");
       setStats(response.data.stats);
       setRecentTickets(response.data.recentTickets);
     } catch (error) {
-      toast.error('Failed to fetch dashboard data');
-      console.error('Error fetching dashboard data:', error);
+      toast.error("Failed to fetch dashboard data");
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -44,9 +50,7 @@ const AgentDashboard = () => {
             <h3 className="mb-0">{value}</h3>
             {subtitle && <small className="text-muted">{subtitle}</small>}
           </div>
-          <div className={`icon-circle bg-${color}-light`}>
-            {icon}
-          </div>
+          <div className={`icon-circle bg-${color}-light`}>{icon}</div>
         </div>
       </Card.Body>
     </Card>
@@ -63,14 +67,14 @@ const AgentDashboard = () => {
           <h2>Agent Dashboard</h2>
           <Button
             variant="primary"
-            onClick={() => navigate('/tickets')}
+            onClick={() => navigate("/tickets")}
             className="d-flex align-items-center"
           >
             <FaList className="me-2" />
             View All Tickets
           </Button>
         </div>
-        
+
         {/* Statistics Cards */}
         <Row className="mb-4">
           <Col md={6} lg={3}>
@@ -122,25 +126,47 @@ const AgentDashboard = () => {
                   <th>Priority</th>
                   <th>Status</th>
                   <th>Due Date</th>
+                  <th>Action</th>
+
                 </tr>
               </thead>
               <tbody>
                 {recentTickets.map((ticket) => (
                   <tr key={ticket.id}>
                     <td>#{ticket.id}</td>
-                    <td>{ticket.subject}</td>
-                    <td>{ticket.customerName}</td>
+                    <td>{ticket.title}</td>
+                    <td>{ticket.customer.username}</td>
                     <td>
-                      <span className={`badge bg-${ticket.priority === 'high' ? 'danger' : ticket.priority === 'medium' ? 'warning' : 'info'}`}>
+                      <span
+                        className={`badge bg-${
+                          ticket.priority === "high"
+                            ? "danger"
+                            : ticket.priority === "medium"
+                            ? "warning"
+                            : "info"
+                        }`}
+                      >
                         {ticket.priority}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge bg-${ticket.status === 'open' ? 'warning' : 'success'}`}>
+                      <span
+                        className={`badge bg-${
+                          ticket.status === "open" ? "warning" : "success"
+                        }`}
+                      >
                         {ticket.status}
                       </span>
                     </td>
                     <td>{new Date(ticket.dueDate).toLocaleDateString()}</td>
+                    <td>
+                      <Link
+                        to={`/tickets/${ticket.id}`}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -181,4 +207,4 @@ const AgentDashboard = () => {
   );
 };
 
-export default AgentDashboard; 
+export default AgentDashboard;
